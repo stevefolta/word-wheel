@@ -69,6 +69,7 @@ function handle_key(event) {
 			cur_word.textContent = nbsp;
 		else
 			cur_word.textContent = entered_word;
+		update_used_letters();
 		handled = true;
 		}
 	else if (key.length == 1 && key >= "a" && key <= "z") {
@@ -76,6 +77,7 @@ function handle_key(event) {
 		entered_word += key;
 		cur_word.textContent = entered_word;
 		handled = true;
+		mark_used_letter(key)
 		}
 	else if (key == "\r") {
 		enter_word();
@@ -97,6 +99,8 @@ function enter_word() {
 		clear_entered_word();
 		return;
 		}
+
+	clear_used_letters()
 
 	if (!all_words[entered_word]) {
 		indicate_word_error(entered_word);
@@ -252,6 +256,49 @@ function clear_word_error_indication() {
 	clear_entered_word();
 	build_found_words(false);
 	error_timeout_id = 0;
+	}
+
+function mark_used_letter(used_letter) {
+	if (given_up) {
+		return;
+		}
+	let circleDOMs = document.getElementsByClassName("letter-circle");
+	let letterDOMs = document.getElementsByClassName("wheel-letter");
+	for (let i = 0; i < circleDOMs.length; i++) {
+		let circleDOM = circleDOMs[i];
+		let letterDOM = letterDOMs[i];
+		let letter = letterDOM.textContent;
+		if (letter !== used_letter) {
+			continue;
+			}
+		if (circleDOM.getAttribute("used")) {
+			continue;
+			}
+		circleDOM.setAttribute("used", true);
+		break;
+		}
+	}
+
+function clear_used_letters() {
+	let circleDOMs = document.getElementsByClassName("letter-circle");
+	for (let i = 0; i < circleDOMs.length; i++) {
+		let circleDOM = circleDOMs[i];
+		circleDOM.removeAttribute("used");
+		}
+	}
+
+function update_used_letters() {
+	// This approarch is a bit "brute force" :sad:
+	// Because there can be more letters in cur-word than are marked used,
+	// it can be complicated to figure out whether to unmark a particular letter.
+	if (given_up) {
+		return;
+		}
+	clear_used_letters();
+	let cur_word = document.getElementById("cur-word").textContent;
+	for (let used_letter of cur_word) {
+		mark_used_letter(used_letter);
+		}
 	}
 
 function clear_entered_word() {

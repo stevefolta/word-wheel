@@ -34,6 +34,10 @@ table.columns td {
 	fill: #F88;
 	}
 
+.letter-circle[used] {
+	fill: #CCC;
+	}
+
 .wheel-letter {
 	font-size: 120px;
 	text-anchor: middle;
